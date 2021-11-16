@@ -15,6 +15,12 @@ function controlKeydown(event) {
       case "a":
         character.left();
         break;
+      case "k":
+        //character a button
+        break;
+      case "l":
+        //character b button
+        break;
       // case "Shift":
       //   sprint();
       //   break;
