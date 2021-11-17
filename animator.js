@@ -10,7 +10,6 @@ function init(ctx) {
   ctx = ctx;
   Characterimg = new Image();
   Characterimg.src = "resources/Character.png";
-  window.requestAnimationFrame(step);
   speedX = 0;
   speedY = 0;
   move = false;
@@ -215,15 +214,8 @@ var collsionArray = [
 var collisionAction = [[[392, 286], [440, 290], ["door1"]]];
 function step() {
   if(animate){
-    frameCount++;
     //control framerate
-    if (frameCount < 7) {
-      window.requestAnimationFrame(step);
-      return;
-    }
-    frameCount = 0;
     ctx.clearRect(character.posX, character.posY, 34, 50);
-    window.requestAnimationFrame(step);
     //stop character from moving out of frame
     collideStop(collsionArray);
     character.actionName = collideAction(collisionAction);
