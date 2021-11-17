@@ -3,6 +3,10 @@ function controlKeydown(event) {
     return;
   }
   switch (event.key) {
+    case "b":
+      ctx = game.context;
+      init(ctx);
+      break;
     case "w":
       character.backward();
       break;
@@ -86,3 +90,4 @@ window.addEventListener(
   },
   true
 );
+
