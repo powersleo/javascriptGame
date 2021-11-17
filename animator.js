@@ -16,7 +16,6 @@ function init(ctx) {
   speedY = 0;
   move = false;
 }
-var collider = [];
 var character = {
   forwardFramesX: [0, 64, 128, 192],
   forwardFramesY: [0, 1, -1, 1],
@@ -73,6 +72,11 @@ var character = {
       character.speedY = character.speedY * 2;
     }
   },
+  action:function(){
+    if(character.isCollidingAction){
+      console.log("acting");
+    }
+  },
   stopsprint:function (){
     character.sprinting=false;
     character.speedX = character.speedX / 2;
@@ -105,15 +109,15 @@ function collideAction(collisionArray){
     console.log("character posX " +  character.posX+ " end frame "+ (character.frame[0] + character.posX ));
     console.log("character posY " + character.posY + " end frame "+(character.frame[1] + character.posY));
     if((character.posX + character.speedX >= (obj[0])[0]) && ( + character.posX +character.speedX  <= (obj[1])[0])&& (character.posY + character.speedY >= (obj[0])[1]) && ( character.posY + character.speedY <= (obj[1])[1])){
-      console.log("character is colliding");
+      console.log("character is able to act");
       character.isCollidingAction = true;
       return;
     }
   }
-  character.isColliding = false;
+  character.isCollidingAction = false;
   return;
 }
-var currentFrame = 0;
+let currentFrame = 0;
 let frameCount = 0;
 function drawFrames(canvasPosX, CanvasPosY, currentDirection, currentFrame) {
   //background 
@@ -195,6 +199,8 @@ function drawFrames(canvasPosX, CanvasPosY, currentDirection, currentFrame) {
 }
 //collisionArray stores values for areas player cannot walk into, 
 var collsionArray = [[[305,215],[525,280]],[[0,0],[944,215]]];
+//collision action detects when you can act, passes interaction id to decide what and who interacted
+var collisionAction =[[[392,286],[440,290],["door"]]]
 function step() {
   frameCount++;
   //control framerate
@@ -206,6 +212,7 @@ function step() {
   ctx.clearRect(character.posX, character.posY, 34, 50);
   window.requestAnimationFrame(step);
   //stop character from moving out of frame  
+  collideAction(collisionAction);
   collideStop(collsionArray);
   if (!character.isColliding) {
       character.posX += character.speedX;
