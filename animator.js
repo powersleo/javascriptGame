@@ -1,5 +1,4 @@
-// var img = new Image();
-// img.src = "resources/Character.js";
+
 const scale = 2;
 const width = 75;
 const height = 50;
@@ -16,6 +15,7 @@ function init(ctx) {
   speedY = 0;
   move = false;
 }
+var animate = true;
 var character = {
   forwardFramesX: [0, 64, 128, 192],
   forwardFramesY: [0, 1, -1, 1],
@@ -34,64 +34,66 @@ var character = {
   currentDirection: 0,
   sprinting: false,
   isColliding: false,
-  isCollidingAction:false,
-  forward: function() {
+  isCollidingAction: false,
+  actionName: null,
+  appears :true,
+  forward: function () {
     character.currentDirection = 0;
     character.speedY = 7;
     character.move = true;
   },
-  backward:function() {
+  backward: function () {
     character.currentDirection = 3;
     character.speedY = -7;
     character.move = true;
   },
-  right:function () {
+  right: function () {
     character.currentDirection = 2;
     character.speedX = 7;
     character.move = true;
   },
-  left:function () {
+  left: function () {
     character.currentDirection = 1;
     character.speedX = -7;
     character.move = true;
   },
-  stop:function () {
+  stop: function () {
     character.speedY = 0;
     character.speedX = 0;
     character.move = false;
     console.log("character stop");
   },
-  stopleft:function () {
+  stopleft: function () {
     character.speedX = 0;
     character.move = false;
   },
-  sprint:function (){
-    if(!character.sprinting){
+  sprint: function () {
+    if (!character.sprinting) {
       character.sprinting = true;
       character.speedX = character.speedX * 2;
       character.speedY = character.speedY * 2;
     }
   },
-  action:function(){
-    if(character.isCollidingAction){
+  action: function () {
+    if (character.isCollidingAction) {
       console.log("acting");
     }
   },
-  stopsprint:function (){
-    character.sprinting=false;
+  stopsprint: function () {
+    character.sprinting = false;
     character.speedX = character.speedX / 2;
     character.speedY = character.speedY / 2;
-  }
+  },
 };
 //used to stop player movement into walls and objects
-function collideStop(collisionArray){
-  for (obj of collisionArray){
-    console.log(obj);
-    console.log("colliderX ",(obj[0])[0]);
-    console.log("colliderY ",obj[0][1]);
-    console.log("character posX " +  character.posX+ " end frame "+ (character.frame[0] + character.posX ));
-    console.log("character posY " + character.posY + " end frame "+(character.frame[1] + character.posY));
-    if((character.posX + character.speedX >= (obj[0])[0]) && ( + character.posX +character.speedX  <= (obj[1])[0])&& (character.posY + character.speedY >= (obj[0])[1]) && ( character.posY + character.speedY <= (obj[1])[1])){
+function collideStop(collisionArray) {
+  for (obj of collisionArray) {
+    if (
+      character.posX + character.speedX >= obj[0][0] &&
+      +character.posX + character.speedX <= obj[1][0] &&
+      character.posY + character.speedY >= obj[0][1] &&
+      character.posY + character.speedY <= obj[1][1]
+    ) {
       console.log("character is colliding");
       character.isColliding = true;
       return;
@@ -101,17 +103,17 @@ function collideStop(collisionArray){
   return;
 }
 //used to create player interaction zones
-function collideAction(collisionArray){
-  for (obj of collisionArray){
-    console.log(obj);
-    console.log("colliderX ",(obj[0])[0]);
-    console.log("colliderY ",obj[0][1]);
-    console.log("character posX " +  character.posX+ " end frame "+ (character.frame[0] + character.posX ));
-    console.log("character posY " + character.posY + " end frame "+(character.frame[1] + character.posY));
-    if((character.posX + character.speedX >= (obj[0])[0]) && ( + character.posX +character.speedX  <= (obj[1])[0])&& (character.posY + character.speedY >= (obj[0])[1]) && ( character.posY + character.speedY <= (obj[1])[1])){
-      console.log("character is able to act");
+function collideAction(collisionArray) {
+  for (obj of collisionArray) {
+    if (
+      character.posX + character.speedX >= obj[0][0] &&
+      +character.posX + character.speedX <= obj[1][0] &&
+      character.posY + character.speedY >= obj[0][1] &&
+      character.posY + character.speedY <= obj[1][1]
+    ) {
+      console.log("character is able to act", (obj[2])[0]);
       character.isCollidingAction = true;
-      return;
+      return (obj[2])[0];
     }
   }
   character.isCollidingAction = false;
@@ -120,117 +122,129 @@ function collideAction(collisionArray){
 let currentFrame = 0;
 let frameCount = 0;
 function drawFrames(canvasPosX, CanvasPosY, currentDirection, currentFrame) {
-  //background 
+  //background
   var background = new Image();
   background.src = "resources/background.png";
   ctx.drawImage(background, 0, 0);
-  //bushes
-  // var bushBot = new Image();
-  // var bushTop = new Image();
-  // bushTop.src = "resources/TallGrassTop.png";
-  // bushBot.src = "resources/TallGrassBot.png";
-  // ctx.drawImage(bushBot,5,405,25,25);
-  // ctx.drawImage(bushBot,5,430,25,25);
-  // ctx.drawImage(bushBot,5,455,25,25);
-  // ctx.drawImage(bushBot,5,480,25,25);
-  // ctx.drawImage(bushBot,5,505,25,25);
   //Draw Character
-  switch (currentDirection) {
-    case 0:
-      ctx.drawImage(
-        Characterimg,
-        character.forwardFramesX[currentFrame],
-        character.forwardFramesY[currentFrame],
-        character.frame[0],
-        character.frame[1],
-        canvasPosX,
-        CanvasPosY,
-        30,
-        50
-      );
-      break;
-    case 1:
-      ctx.drawImage(
-        Characterimg,
-        character.leftFramesX[currentFrame],
-        character.leftFramesY[currentFrame],
-        character.frame[0],
-        character.frame[1],
-        canvasPosX,
-        CanvasPosY,
-        30,
-        50
-      );
-      break;
-    case 2:
-      ctx.drawImage(
-        Characterimg,
-        character.rightFramesX[currentFrame],
-        character.rightFramesY[currentFrame],
-        character.frame[0],
-        character.frame[1],
-        canvasPosX,
-        CanvasPosY,
-        30,
-        50
-      );
-      break;
-    case 3:
-      ctx.drawImage(
-        Characterimg,
-        character.backFramesX[currentFrame],
-        character.backFramesY[currentFrame],
-        character.frame[0],
-        character.frame[1],
-        canvasPosX,
-        CanvasPosY,
-        30,
-        50
-      );
-      break;
+  if(character.appears){
+    switch (currentDirection) {
+      case 0:
+        ctx.drawImage(
+          Characterimg,
+          character.forwardFramesX[currentFrame],
+          character.forwardFramesY[currentFrame],
+          character.frame[0],
+          character.frame[1],
+          canvasPosX,
+          CanvasPosY,
+          30,
+          40
+        );
+        break;
+      case 1:
+        ctx.drawImage(
+          Characterimg,
+          character.leftFramesX[currentFrame],
+          character.leftFramesY[currentFrame],
+          character.frame[0],
+          character.frame[1],
+          canvasPosX,
+          CanvasPosY,
+          30,
+          40
+        );
+        break;
+      case 2:
+        ctx.drawImage(
+          Characterimg,
+          character.rightFramesX[currentFrame],
+          character.rightFramesY[currentFrame],
+          character.frame[0],
+          character.frame[1],
+          canvasPosX,
+          CanvasPosY,
+          30,
+          40
+        );
+        break;
+      case 3:
+        ctx.drawImage(
+          Characterimg,
+          character.backFramesX[currentFrame],
+          character.backFramesY[currentFrame],
+          character.frame[0],
+          character.frame[1],
+          canvasPosX,
+          CanvasPosY,
+          30,
+          40
+        );
+        break;
+    }
   }
-  // ctx.drawImage(bushTop,5,400,25,25);
-  // ctx.drawImage(bushTop,5,425,25,25);
-  // ctx.drawImage(bushTop,5,450,25,25);
-  // ctx.drawImage(bushTop,5,475,25,25);
-  // ctx.drawImage(bushTop,5,500,25,25);
-
-
+  if (character.isCollidingAction) {
+    switch (character.actionName) {
+      case "door1":
+        let img = new Image();
+        img.src = "resources/DoorOpen.png";
+        ctx.drawImage(img, 0, 0, 20, 20, 418, 280,32,32);
+        var audio = new Audio('sound/door_enter.wav');
+        audio.loop = false;
+        audio.load();
+        setTimeout(function(){audio.play()},100);
+        character.appears = false;
+        setTimeout(function(){animate = false;},200);
+        changeMap();
+        break;
+    }
+  }
 }
-//collisionArray stores values for areas player cannot walk into, 
-var collsionArray = [[[305,215],[525,280]],[[0,0],[944,215]]];
+//collisionArray stores values for areas player cannot walk into,
+var collsionArray = [
+  [
+    [305, 215],
+    [525, 280],
+  ],
+  [
+    [-5, -5],
+    [944, 215],
+  ],
+];
 //collision action detects when you can act, passes interaction id to decide what and who interacted
-var collisionAction =[[[392,286],[440,290],["door"]]]
+var collisionAction = [[[392, 286], [440, 290], ["door1"]]];
 function step() {
-  frameCount++;
-  //control framerate
-  if (frameCount < 5) {
+  if(animate){
+    frameCount++;
+    //control framerate
+    if (frameCount < 7) {
+      window.requestAnimationFrame(step);
+      return;
+    }
+    frameCount = 0;
+    ctx.clearRect(character.posX, character.posY, 34, 50);
     window.requestAnimationFrame(step);
-    return;
-  }
-  frameCount = 0;
-  ctx.clearRect(character.posX, character.posY, 34, 50);
-  window.requestAnimationFrame(step);
-  //stop character from moving out of frame  
-  collideAction(collisionAction);
-  collideStop(collsionArray);
-  if (!character.isColliding) {
+    //stop character from moving out of frame
+    collideStop(collsionArray);
+    character.actionName = collideAction(collisionAction);
+    if (!character.isColliding) {
       character.posX += character.speedX;
       character.posY += character.speedY;
-  }
-  //draw screen
-  drawFrames(
-    character.posX,
-    character.posY,
-    character.currentDirection,
-    currentFrame
-  );
-  //stop animation of character is not moving
-  if (character.move) {
-    currentFrame++;
-  }
-  //loop frame
-  if (currentFrame >= 4) {
-    currentFrame = 0;
+    }
+    //draw screen
+    drawFrames(
+      character.posX,
+      character.posY,
+      character.currentDirection,
+      currentFrame
+    );
+    //stop animation of character is not moving
+    if (character.move) {
+      currentFrame++;
+    }
+    //loop frame
+    if (currentFrame >= 4) {
+      currentFrame = 0;
+    }
   }
 }
