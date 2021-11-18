@@ -17,7 +17,7 @@ var game = {
     init(this.context);
     window.requestAnimationFrame(gameLoop);
     function gameLoop() {
-      if (game.frameNo > 2) {
+      if (game.frameNo > 5) {
         step();
         game.frameNo = 0;
       }

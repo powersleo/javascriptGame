@@ -5,7 +5,7 @@ var img;
 var ctx;
 var canvasWidth = 960;
 var canvasHeight = 600;
-var currentSceneNum = 3;
+var currentSceneNum = 1;
 function init(context) {
   ctx = context;
   Characterimg = new Image();
@@ -23,19 +23,16 @@ var scene = {
   secondScene: "resources/building1.png",
 };
 var animate = true;
-var beirman ={
-  frame : [34,50]
-}
-function createTextBox(text){
+var beirman = {
+  frame: [34, 50],
+};
+function createTextBox(text) {
   textbox.src = "resources/TextBox.png";
   console.log("text box created");
-  ctx.drawImage(textbox,100,100,100,100);
+  ctx.drawImage(textbox, 100, 500, 600, 100);
   ctx.font = "bold 30px Courier New";
   ctx.fillText(text, 250, 560);
-  animate = false;
-  if(character.acting ==true){
-    animate = true;
-}
+  
 }
 var character = {
   forwardFramesX: [0, 64, 128, 192],
@@ -224,6 +221,7 @@ function drawFrames(
           break;
       }
     }
+    createTextBox("Develope this!");
   }
   if (sceneNum == 3) {
     var background = new Image();
@@ -284,7 +282,7 @@ function drawFrames(
           );
           break;
       }
-      ctx.drawImage(biermanimg,480,60,100,100);
+      ctx.drawImage(biermanimg, 480, 60, 100, 100);
       console.log(canvasPosX, " ", CanvasPosY);
     }
   }
@@ -310,9 +308,10 @@ function drawFrames(
         character.posY = 468;
         break;
       case "bierman":
-
+        if(character.acting){
           createTextBox("Develope this!");
-    
+        }
+        break;
       default:
         break;
     }
@@ -325,13 +324,34 @@ function drawFrames(
 var collsionArray = [
   [[305, 215], [525, 280], [2]],
   [[-5, -5], [944, 215], [2]],
-  //[[415,353],[483,392],[3]],
-  [[415, 353], [483, 392], [3]],
+  [[415, 173], [483, 205], [3]],
+  [[415, 233], [483, 265], [3]],
   [[415, 293], [483, 325], [3]],
-  //[[415,353],[483,392],[3]],
+  [[415, 353], [483, 392], [3]],
+
+  [[326, 173], [387, 205], [3]],
+  [[326, 233], [387, 265], [3]],
+  [[326, 293], [387, 325], [3]],
+  [[326, 353], [387, 392], [3]],
+
+  [[551, 173], [620, 205], [3]],
+  [[551, 233], [620, 265], [3]],
+  [[551, 293], [620, 325], [3]],
+  [[551, 353], [620, 392], [3]],
+
+  [[640, 173], [709, 205], [3]],
+  [[640, 233], [709, 265], [3]],
+  [[640, 293], [709, 325], [3]],
+  [[640, 353], [709, 392], [3]],
+
+  [[294,470],[763,480],[3]],
+  [[270,41],[777,89],[3]]
 ];
 //collision action detects when you can act, passes interaction id to decide what and who interacted
-var collisionAction = [[[392, 286], [440, 290], ["door1"], [2]],[[483, 69], [560, 160], ["bierman"], [3]]];
+var collisionAction = [
+  [[392, 286], [440, 290], ["door1"], [2]],
+  [[483, 69], [560, 160], ["bierman"], [3]],
+];
 function step() {
   if (animate) {
     //control framerate
