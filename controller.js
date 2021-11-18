@@ -62,6 +62,9 @@ function controlKeyup(event) {
     case "Spacebar":
       character.stop();
       break;
+    case "k":
+      character.acting = false;
+      break;
     // case "Shift":
     //   stopSprint();
     //   break;
@@ -89,4 +92,3 @@ window.addEventListener(
   },
   true
 );
-

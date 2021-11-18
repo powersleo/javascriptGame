@@ -10,6 +10,9 @@ function init(context) {
   ctx = context;
   Characterimg = new Image();
   Characterimg.src = "resources/Character.png";
+  biermanimg = new Image();
+  biermanimg.src = "resources/bierman1.png";
+  textbox = new Image();
   speedX = 0;
   speedY = 0;
   move = false;
@@ -20,6 +23,20 @@ var scene = {
   secondScene: "resources/building1.png",
 };
 var animate = true;
+var beirman ={
+  frame : [34,50]
+}
+function createTextBox(text){
+  textbox.src = "resources/TextBox.png";
+  console.log("text box created");
+  ctx.drawImage(textbox,100,100,100,100);
+  ctx.font = "bold 30px Courier New";
+  ctx.fillText(text, 250, 560);
+  animate = false;
+  if(character.acting ==true){
+    animate = true;
+}
+}
 var character = {
   forwardFramesX: [0, 64, 128, 192],
   forwardFramesY: [0, 1, -1, 1],
@@ -39,6 +56,7 @@ var character = {
   sprinting: false,
   isColliding: false,
   isCollidingAction: false,
+  acting: false,
   actionName: null,
   appears: true,
   forward: function () {
@@ -78,8 +96,7 @@ var character = {
     }
   },
   action: function () {
-    if (character.isCollidingAction) {
-    }
+    acting = true;
   },
   stopsprint: function () {
     character.sprinting = false;
@@ -267,7 +284,8 @@ function drawFrames(
           );
           break;
       }
-      console.log(canvasPosX," ",CanvasPosY);
+      ctx.drawImage(biermanimg,480,60,100,100);
+      console.log(canvasPosX, " ", CanvasPosY);
     }
   }
   if (character.isCollidingAction) {
@@ -288,7 +306,13 @@ function drawFrames(
           character.appears = true;
           game.clear();
         }, 100);
+        character.posX = 518;
+        character.posY = 468;
         break;
+      case "bierman":
+
+          createTextBox("Develope this!");
+    
       default:
         break;
     }
@@ -296,14 +320,18 @@ function drawFrames(
 }
 
 //collisionArray stores values for areas player cannot walk into,
+//might split this up if it becomes a problem
+//desks are 68px wide 32px tall
 var collsionArray = [
   [[305, 215], [525, 280], [2]],
   [[-5, -5], [944, 215], [2]],
-  [[350,300],[480,325],[3]],
-  [[456],[],[]]
+  //[[415,353],[483,392],[3]],
+  [[415, 353], [483, 392], [3]],
+  [[415, 293], [483, 325], [3]],
+  //[[415,353],[483,392],[3]],
 ];
 //collision action detects when you can act, passes interaction id to decide what and who interacted
-var collisionAction = [[[392, 286], [440, 290], ["door1"], [2]]];
+var collisionAction = [[[392, 286], [440, 290], ["door1"], [2]],[[483, 69], [560, 160], ["bierman"], [3]]];
 function step() {
   if (animate) {
     //control framerate
