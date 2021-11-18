@@ -5,7 +5,7 @@ var img;
 var ctx;
 var canvasWidth = 960;
 var canvasHeight = 600;
-var currentSceneNum = 1;
+var currentSceneNum = 3;
 function init(context) {
   ctx = context;
   Characterimg = new Image();
@@ -17,7 +17,7 @@ function init(context) {
 var scene = {
   title: "resources/titlescreen.jpg",
   firstScene: "resources/background.png",
-  secondScene:"resurces/"
+  secondScene: "resources/building1.png",
 };
 var animate = true;
 var character = {
@@ -65,7 +65,6 @@ var character = {
     character.speedY = 0;
     character.speedX = 0;
     character.move = false;
-    console.log("character stop");
   },
   stopleft: function () {
     character.speedX = 0;
@@ -80,7 +79,6 @@ var character = {
   },
   action: function () {
     if (character.isCollidingAction) {
-      console.log("acting");
     }
   },
   stopsprint: function () {
@@ -92,15 +90,16 @@ var character = {
 //used to stop player movement into walls and objects
 function collideStop(collisionArray) {
   for (obj of collisionArray) {
-    if (
-      character.posX + character.speedX >= obj[0][0] &&
-      +character.posX + character.speedX <= obj[1][0] &&
-      character.posY + character.speedY >= obj[0][1] &&
-      character.posY + character.speedY <= obj[1][1]
-    ) {
-      console.log("character is colliding");
-      character.isColliding = true;
-      return;
+    if (obj[2][0] == currentSceneNum) {
+      if (
+        character.posX + character.speedX >= obj[0][0] &&
+        +character.posX + character.speedX <= obj[1][0] &&
+        character.posY + character.speedY >= obj[0][1] &&
+        character.posY + character.speedY <= obj[1][1]
+      ) {
+        character.isColliding = true;
+        return;
+      }
     }
   }
   character.isColliding = false;
@@ -109,15 +108,17 @@ function collideStop(collisionArray) {
 //used to create player interaction zones
 function collideAction(collisionArray) {
   for (obj of collisionArray) {
-    if (
-      character.posX + character.speedX >= obj[0][0] &&
-      +character.posX + character.speedX <= obj[1][0] &&
-      character.posY + character.speedY >= obj[0][1] &&
-      character.posY + character.speedY <= obj[1][1]
-    ) {
-      console.log("character is able to act", obj[2][0]);
-      character.isCollidingAction = true;
-      return obj[2][0];
+    console.log(obj[3][0], currentSceneNum == obj[3][0], currentSceneNum);
+    if (currentSceneNum == obj[3][0]) {
+      if (
+        character.posX + character.speedX >= obj[0][0] &&
+        +character.posX + character.speedX <= obj[1][0] &&
+        character.posY + character.speedY >= obj[0][1] &&
+        character.posY + character.speedY <= obj[1][1]
+      ) {
+        character.isCollidingAction = true;
+        return obj[2][0];
+      }
     }
   }
   character.isCollidingAction = false;
@@ -140,8 +141,10 @@ function drawFrames(
     titleImg = new Image();
     titleImg.src = "resources/Title.png";
     ctx.drawImage(titleImg, 150, 0);
-    ctx.font = "60px Courier New";
+    ctx.font = "bold 60px Courier New";
     ctx.fillText("Press B to Start", 230, 450);
+    ctx.font = "bold 30px Courier New";
+    ctx.fillText("Click to pause/play music", 250, 560);
   }
   //Draw Character
   if (sceneNum == 2) {
@@ -204,66 +207,68 @@ function drawFrames(
           break;
       }
     }
-    if (sceneNum == 3) {
-      var background = new Image();
-      background.src = scene.secondScene;
-      ctx.drawImage(background, 0, 0);
-      if (character.appears) {
-        switch (currentDirection) {
-          case 0:
-            ctx.drawImage(
-              Characterimg,
-              character.forwardFramesX[currentFrame],
-              character.forwardFramesY[currentFrame],
-              character.frame[0],
-              character.frame[1],
-              canvasPosX,
-              CanvasPosY,
-              30,
-              40
-            );
-            break;
-          case 1:
-            ctx.drawImage(
-              Characterimg,
-              character.leftFramesX[currentFrame],
-              character.leftFramesY[currentFrame],
-              character.frame[0],
-              character.frame[1],
-              canvasPosX,
-              CanvasPosY,
-              30,
-              40
-            );
-            break;
-          case 2:
-            ctx.drawImage(
-              Characterimg,
-              character.rightFramesX[currentFrame],
-              character.rightFramesY[currentFrame],
-              character.frame[0],
-              character.frame[1],
-              canvasPosX,
-              CanvasPosY,
-              30,
-              40
-            );
-            break;
-          case 3:
-            ctx.drawImage(
-              Characterimg,
-              character.backFramesX[currentFrame],
-              character.backFramesY[currentFrame],
-              character.frame[0],
-              character.frame[1],
-              canvasPosX,
-              CanvasPosY,
-              30,
-              40
-            );
-            break;
-        }
+  }
+  if (sceneNum == 3) {
+    var background = new Image();
+    background.src = scene.secondScene;
+    ctx.drawImage(background, 0, 0);
+    if (character.appears) {
+      switch (currentDirection) {
+        case 0:
+          ctx.drawImage(
+            Characterimg,
+            character.forwardFramesX[currentFrame],
+            character.forwardFramesY[currentFrame],
+            character.frame[0],
+            character.frame[1],
+            canvasPosX,
+            CanvasPosY,
+            30,
+            40
+          );
+          break;
+        case 1:
+          ctx.drawImage(
+            Characterimg,
+            character.leftFramesX[currentFrame],
+            character.leftFramesY[currentFrame],
+            character.frame[0],
+            character.frame[1],
+            canvasPosX,
+            CanvasPosY,
+            30,
+            40
+          );
+          break;
+        case 2:
+          ctx.drawImage(
+            Characterimg,
+            character.rightFramesX[currentFrame],
+            character.rightFramesY[currentFrame],
+            character.frame[0],
+            character.frame[1],
+            canvasPosX,
+            CanvasPosY,
+            30,
+            40
+          );
+          break;
+        case 3:
+          ctx.drawImage(
+            Characterimg,
+            character.backFramesX[currentFrame],
+            character.backFramesY[currentFrame],
+            character.frame[0],
+            character.frame[1],
+            canvasPosX,
+            CanvasPosY,
+            30,
+            40
+          );
+          break;
       }
+      console.log(canvasPosX," ",CanvasPosY);
+    }
   }
   if (character.isCollidingAction) {
     switch (character.actionName) {
@@ -278,27 +283,27 @@ function drawFrames(
           audio.play();
         }, 100);
         character.appears = false;
+        currentSceneNum = 3;
         setTimeout(function () {
-          animate = false;
-        }, 200);
-        game.clear();
+          character.appears = true;
+          game.clear();
+        }, 100);
+        break;
+      default:
         break;
     }
   }
 }
+
 //collisionArray stores values for areas player cannot walk into,
 var collsionArray = [
-  [
-    [305, 215],
-    [525, 280],
-  ],
-  [
-    [-5, -5],
-    [944, 215],
-  ],
+  [[305, 215], [525, 280], [2]],
+  [[-5, -5], [944, 215], [2]],
+  [[350,300],[480,325],[3]],
+  [[456],[],[]]
 ];
 //collision action detects when you can act, passes interaction id to decide what and who interacted
-var collisionAction = [[[392, 286], [440, 290], ["door1"]]];
+var collisionAction = [[[392, 286], [440, 290], ["door1"], [2]]];
 function step() {
   if (animate) {
     //control framerate
