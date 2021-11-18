@@ -6,12 +6,13 @@ var ctx;
 var canvasWidth = 960;
 var canvasHeight = 600;
 var currentSceneNum = 1;
+var textboxes = [];
 function init(context) {
   ctx = context;
   Characterimg = new Image();
   Characterimg.src = "resources/Character.png";
-  biermanimg = new Image();
-  biermanimg.src = "resources/bierman1.png";
+  biermannimg = new Image();
+  biermannimg.src = "resources/bierman1.png";
   textbox = new Image();
   speedX = 0;
   speedY = 0;
@@ -23,16 +24,36 @@ var scene = {
   secondScene: "resources/building1.png",
 };
 var animate = true;
-var beirman = {
+var biermann = {
+  talking: false,
   frame: [34, 50],
 };
+var currentText = 0;
 function createTextBox(text) {
   textbox.src = "resources/TextBox.png";
   console.log("text box created");
-  ctx.drawImage(textbox, 100, 500, 600, 100);
+  ctx.drawImage(textbox, 100, 500, 800, 100);
   ctx.font = "bold 30px Courier New";
   ctx.fillText(text, 250, 560);
-  
+}
+function startTextBoxQueue() {
+  console.log(textboxes, currentText);
+  if (textboxes[currentText]) {
+    createTextBox(textboxes[currentText]);
+  }
+  setTimeout(() => {
+    if (character.acting) {
+      click = new Audio();
+      click.src = "";
+      textisup = false;
+      if (currentText < textboxes.length) {
+        currentText++;
+      } else {
+        biermann.talking = false;
+        currentSceneNum = 4;
+      }
+    }
+  }, 1000);
 }
 var character = {
   forwardFramesX: [0, 64, 128, 192],
@@ -93,7 +114,7 @@ var character = {
     }
   },
   action: function () {
-    acting = true;
+    character.acting = true;
   },
   stopsprint: function () {
     character.sprinting = false;
@@ -122,7 +143,6 @@ function collideStop(collisionArray) {
 //used to create player interaction zones
 function collideAction(collisionArray) {
   for (obj of collisionArray) {
-    console.log(obj[3][0], currentSceneNum == obj[3][0], currentSceneNum);
     if (currentSceneNum == obj[3][0]) {
       if (
         character.posX + character.speedX >= obj[0][0] &&
@@ -221,9 +241,9 @@ function drawFrames(
           break;
       }
     }
-    createTextBox("Develope this!");
   }
   if (sceneNum == 3) {
+    console.log(character.acting);
     var background = new Image();
     background.src = scene.secondScene;
     ctx.drawImage(background, 0, 0);
@@ -282,8 +302,16 @@ function drawFrames(
           );
           break;
       }
-      ctx.drawImage(biermanimg, 480, 60, 100, 100);
-      console.log(canvasPosX, " ", CanvasPosY);
+      if (biermann.talking) {
+        if (!textboxes.includes("Ahh I see you finally came to class.")) {
+          textboxes.push("Ahh I see you finally came to class.");
+        }
+        if (!textboxes.includes("well how about you develop this!!!")) {
+          textboxes.push("well how about you develop this!!!");
+        }
+        startTextBoxQueue();
+      }
+      ctx.drawImage(biermannimg, 480, 60, 100, 100);
     }
   }
   if (character.isCollidingAction) {
@@ -308,8 +336,9 @@ function drawFrames(
         character.posY = 468;
         break;
       case "bierman":
-        if(character.acting){
-          createTextBox("Develope this!");
+        console.log(character.acting);
+        if (character.acting) {
+          biermann.talking = true;
         }
         break;
       default:
@@ -344,8 +373,12 @@ var collsionArray = [
   [[640, 293], [709, 325], [3]],
   [[640, 353], [709, 392], [3]],
 
-  [[294,470],[763,480],[3]],
-  [[270,41],[777,89],[3]]
+  [[294, 470], [763, 480], [3]],
+  [[270, 41], [777, 89], [3]],
+  [[280, 60], [294, 496], [3]],
+  [[755, 60], [800, 496], [3]],
+  [[470, 100], [546, 146], [3]],
+  [[490, 90], [546, 125], [3]],
 ];
 //collision action detects when you can act, passes interaction id to decide what and who interacted
 var collisionAction = [
