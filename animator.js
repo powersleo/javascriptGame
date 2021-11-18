@@ -1,4 +1,3 @@
-
 const scale = 2;
 const width = 75;
 const height = 50;
@@ -6,14 +5,20 @@ var img;
 var ctx;
 var canvasWidth = 960;
 var canvasHeight = 600;
-function init(ctx) {
-  ctx = ctx;
+var currentSceneNum = 1;
+function init(context) {
+  ctx = context;
   Characterimg = new Image();
   Characterimg.src = "resources/Character.png";
   speedX = 0;
   speedY = 0;
   move = false;
 }
+var scene = {
+  title: "resources/titlescreen.jpg",
+  firstScene: "resources/background.png",
+  secondScene:"resurces/"
+};
 var animate = true;
 var character = {
   forwardFramesX: [0, 64, 128, 192],
@@ -35,7 +40,7 @@ var character = {
   isColliding: false,
   isCollidingAction: false,
   actionName: null,
-  appears :true,
+  appears: true,
   forward: function () {
     character.currentDirection = 0;
     character.speedY = 7;
@@ -110,9 +115,9 @@ function collideAction(collisionArray) {
       character.posY + character.speedY >= obj[0][1] &&
       character.posY + character.speedY <= obj[1][1]
     ) {
-      console.log("character is able to act", (obj[2])[0]);
+      console.log("character is able to act", obj[2][0]);
       character.isCollidingAction = true;
-      return (obj[2])[0];
+      return obj[2][0];
     }
   }
   character.isCollidingAction = false;
@@ -120,81 +125,163 @@ function collideAction(collisionArray) {
 }
 let currentFrame = 0;
 let frameCount = 0;
-function drawFrames(canvasPosX, CanvasPosY, currentDirection, currentFrame) {
+function drawFrames(
+  sceneNum,
+  canvasPosX,
+  CanvasPosY,
+  currentDirection,
+  currentFrame
+) {
   //background
-  var background = new Image();
-  background.src = "resources/background.png";
-  ctx.drawImage(background, 0, 0);
+  if (sceneNum == 1) {
+    var background = new Image();
+    background.src = scene.title;
+    ctx.drawImage(background, 0, 0);
+    titleImg = new Image();
+    titleImg.src = "resources/Title.png";
+    ctx.drawImage(titleImg, 150, 0);
+    ctx.font = "60px Courier New";
+    ctx.fillText("Press B to Start", 230, 450);
+  }
   //Draw Character
-  if(character.appears){
-    switch (currentDirection) {
-      case 0:
-        ctx.drawImage(
-          Characterimg,
-          character.forwardFramesX[currentFrame],
-          character.forwardFramesY[currentFrame],
-          character.frame[0],
-          character.frame[1],
-          canvasPosX,
-          CanvasPosY,
-          30,
-          40
-        );
-        break;
-      case 1:
-        ctx.drawImage(
-          Characterimg,
-          character.leftFramesX[currentFrame],
-          character.leftFramesY[currentFrame],
-          character.frame[0],
-          character.frame[1],
-          canvasPosX,
-          CanvasPosY,
-          30,
-          40
-        );
-        break;
-      case 2:
-        ctx.drawImage(
-          Characterimg,
-          character.rightFramesX[currentFrame],
-          character.rightFramesY[currentFrame],
-          character.frame[0],
-          character.frame[1],
-          canvasPosX,
-          CanvasPosY,
-          30,
-          40
-        );
-        break;
-      case 3:
-        ctx.drawImage(
-          Characterimg,
-          character.backFramesX[currentFrame],
-          character.backFramesY[currentFrame],
-          character.frame[0],
-          character.frame[1],
-          canvasPosX,
-          CanvasPosY,
-          30,
-          40
-        );
-        break;
+  if (sceneNum == 2) {
+    var background = new Image();
+    background.src = scene.firstScene;
+    ctx.drawImage(background, 0, 0);
+    if (character.appears) {
+      switch (currentDirection) {
+        case 0:
+          ctx.drawImage(
+            Characterimg,
+            character.forwardFramesX[currentFrame],
+            character.forwardFramesY[currentFrame],
+            character.frame[0],
+            character.frame[1],
+            canvasPosX,
+            CanvasPosY,
+            30,
+            40
+          );
+          break;
+        case 1:
+          ctx.drawImage(
+            Characterimg,
+            character.leftFramesX[currentFrame],
+            character.leftFramesY[currentFrame],
+            character.frame[0],
+            character.frame[1],
+            canvasPosX,
+            CanvasPosY,
+            30,
+            40
+          );
+          break;
+        case 2:
+          ctx.drawImage(
+            Characterimg,
+            character.rightFramesX[currentFrame],
+            character.rightFramesY[currentFrame],
+            character.frame[0],
+            character.frame[1],
+            canvasPosX,
+            CanvasPosY,
+            30,
+            40
+          );
+          break;
+        case 3:
+          ctx.drawImage(
+            Characterimg,
+            character.backFramesX[currentFrame],
+            character.backFramesY[currentFrame],
+            character.frame[0],
+            character.frame[1],
+            canvasPosX,
+            CanvasPosY,
+            30,
+            40
+          );
+          break;
+      }
     }
+    if (sceneNum == 3) {
+      var background = new Image();
+      background.src = scene.secondScene;
+      ctx.drawImage(background, 0, 0);
+      if (character.appears) {
+        switch (currentDirection) {
+          case 0:
+            ctx.drawImage(
+              Characterimg,
+              character.forwardFramesX[currentFrame],
+              character.forwardFramesY[currentFrame],
+              character.frame[0],
+              character.frame[1],
+              canvasPosX,
+              CanvasPosY,
+              30,
+              40
+            );
+            break;
+          case 1:
+            ctx.drawImage(
+              Characterimg,
+              character.leftFramesX[currentFrame],
+              character.leftFramesY[currentFrame],
+              character.frame[0],
+              character.frame[1],
+              canvasPosX,
+              CanvasPosY,
+              30,
+              40
+            );
+            break;
+          case 2:
+            ctx.drawImage(
+              Characterimg,
+              character.rightFramesX[currentFrame],
+              character.rightFramesY[currentFrame],
+              character.frame[0],
+              character.frame[1],
+              canvasPosX,
+              CanvasPosY,
+              30,
+              40
+            );
+            break;
+          case 3:
+            ctx.drawImage(
+              Characterimg,
+              character.backFramesX[currentFrame],
+              character.backFramesY[currentFrame],
+              character.frame[0],
+              character.frame[1],
+              canvasPosX,
+              CanvasPosY,
+              30,
+              40
+            );
+            break;
+        }
+      }
   }
   if (character.isCollidingAction) {
     switch (character.actionName) {
       case "door1":
         let img = new Image();
         img.src = "resources/DoorOpen.png";
-        ctx.drawImage(img, 0, 0, 20, 20, 418, 280,32,32);
-        var audio = new Audio('sound/door_enter.wav');
+        ctx.drawImage(img, 0, 0, 20, 20, 418, 280, 32, 32);
+        var audio = new Audio("sound/door_enter.wav");
         audio.loop = false;
         audio.load();
-        setTimeout(function(){audio.play()},100);
+        setTimeout(function () {
+          audio.play();
+        }, 100);
         character.appears = false;
-        setTimeout(function(){animate = false;},200);
-        changeMap();
+        setTimeout(function () {
+          animate = false;
+        }, 200);
+        game.clear();
         break;
     }
   }
@@ -213,9 +300,8 @@ var collsionArray = [
 //collision action detects when you can act, passes interaction id to decide what and who interacted
 var collisionAction = [[[392, 286], [440, 290], ["door1"]]];
 function step() {
-  if(animate){
+  if (animate) {
     //control framerate
-    ctx.clearRect(character.posX, character.posY, 34, 50);
     //stop character from moving out of frame
     collideStop(collsionArray);
     character.actionName = collideAction(collisionAction);
@@ -225,6 +311,7 @@ function step() {
     }
     //draw screen
     drawFrames(
+      currentSceneNum,
       character.posX,
       character.posY,
       character.currentDirection,

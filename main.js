@@ -2,6 +2,7 @@ var ctx;
 //only used to draw canvas
 var game = {
   canvas: document.createElement("canvas"),
+  frameNo:0,
   start: function () {
     this.canvas.width = 960;
     this.canvas.height = 600;
@@ -9,10 +10,16 @@ var game = {
     this.canvas.style =
       "position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; margin: auto; border:2px solid blue";
     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    text = new TextMessage("test");
-    text.init(document.body);
-    this.frameNo = 0;
-  
+    init(this.context);
+    window.requestAnimationFrame(gameLoop);
+    function gameLoop() {
+      if (game.frameNo > 5) {
+        step();
+        game.frameNo = 0;
+      }
+      game.frameNo++;
+      window.requestAnimationFrame(gameLoop);
+    }
   },
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -24,7 +31,4 @@ var game = {
 //start the game
 function startGame() {
   game.start();
-}
-function changeMap() {
-  game.clear();
 }

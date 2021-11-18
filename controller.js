@@ -4,8 +4,7 @@ function controlKeydown(event) {
   }
   switch (event.key) {
     case "b":
-      ctx = game.context;
-      init(ctx);
+      currentSceneNum = 2;
       break;
     case "w":
       character.backward();
