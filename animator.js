@@ -5,7 +5,7 @@ var img;
 var ctx;
 var canvasWidth = 960;
 var canvasHeight = 600;
-var currentSceneNum = 4;
+var currentSceneNum = 1;
 var textboxes = [];
 var intro = true;
 var gpa = 4.0;
@@ -117,6 +117,9 @@ function clicktext() {
       setTimeout(function () {
         game.clear();
         currentSceneNum = 5;
+        ctx.fillStyle = "white";
+        ctx.fillText("the end",0,0);
+
       }, 1000);
     }
   }
@@ -285,6 +288,7 @@ function drawFrames(
   }
   //Draw Character
   if (sceneNum == 2) {
+    console.log(character.posX, character.posY);
     var background = new Image();
     background.src = scene.firstScene;
     ctx.drawImage(background, 0, 0);
@@ -485,7 +489,11 @@ function drawFrames(
 //desks are 68px wide 32px tall
 var collsionArray = [
   [[305, 215], [525, 280], [2]],
+  [[0, 570], [940, 640], [2]],
   [[-5, -5], [944, 215], [2]],
+  [[-10, 0], [-1, 640], [2]],
+  [[940, 0], [950, 640], [2]],
+
   [[415, 173], [483, 205], [3]],
   [[415, 233], [483, 265], [3]],
   [[415, 293], [483, 325], [3]],
