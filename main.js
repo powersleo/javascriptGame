@@ -3,6 +3,7 @@ var ctx;
 var audio = new Audio("sound/main-theme.ogg");
 audio.loop = false;
 audio.load();
+//used to draw canvas and set frame rate
 var game = {
   canvas: document.createElement("canvas"),
   frameNo: 0,
@@ -17,6 +18,8 @@ var game = {
     init(this.context);
     window.requestAnimationFrame(gameLoop);
     function gameLoop() {
+      //issue with some processors/ screen refresh rates being inconsistent across different computers
+      //if frame rate feels too slow or fast raise 5 to higher or lower
       if (game.frameNo > 5) {
         step();
         game.frameNo = 0;
@@ -28,16 +31,13 @@ var game = {
   clear: function () {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
-  stop: function () {
-    clearInterval(this.interval);
-  },
-};
+}
 //start the game
 function startGame() {
   game.start();
 }
 
-//
+//used to play music on the title screen
 function startMusic() {
   switch (currentSceneNum) {
     case 1:

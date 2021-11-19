@@ -1,10 +1,16 @@
+//This function is used to control the character with the keyboard
+var time = 0;
+var enabled = true;
+//handles keyboard, keypress down
 function controlKeydown(event) {
   if (event.defaultPrevented) {
     return;
   }
   switch (event.key) {
     case "b":
-      currentSceneNum = 2;
+      if(currentSceneNum ==1 ){
+        currentSceneNum = 2;
+      }
       break;
     case "w":
       character.backward();
@@ -19,14 +25,10 @@ function controlKeydown(event) {
       character.left();
       break;
     case "k":
-      character.action();
       break;
     case "l":
       //character b button
       break;
-    // case "Shift":
-    //   sprint();
-    //   break;
     case "Up":
     case "ArrowUp":
       break;
@@ -34,14 +36,13 @@ function controlKeydown(event) {
     case "ArrowDown":
       break;
     case " ":
-    // case "Spacebar":
-    //   jump();
-    //   break;
+
     default:
       return;
   }
   event.preventDefault();
 }
+//handles keyboard key press up
 function controlKeyup(event) {
   if (event.defaultPrevented) {
     return;
@@ -63,11 +64,12 @@ function controlKeyup(event) {
       character.stop();
       break;
     case "k":
-      character.acting = false;
+      clicktext();
+      character.action();
       break;
-    // case "Shift":
-    //   stopSprint();
-    //   break;
+    case "l":
+        develop();
+        break;
     case "Up":
     case "ArrowUp":
     case "Down":

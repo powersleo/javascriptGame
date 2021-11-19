@@ -5,8 +5,12 @@ var img;
 var ctx;
 var canvasWidth = 960;
 var canvasHeight = 600;
-var currentSceneNum = 1;
+var currentSceneNum = 4;
 var textboxes = [];
+var intro = true;
+var gpa = 4.0;
+talking = true;
+//called at the beginning of the game to populate images and start the game
 function init(context) {
   ctx = context;
   Characterimg = new Image();
@@ -18,10 +22,39 @@ function init(context) {
   speedY = 0;
   move = false;
 }
+//used to develop website in battle scene
+function develop() {
+  if (currentSceneNum == 4) {
+    rantint = Math.floor(Math.random() * 5);
+    console.log(rantint);
+    textboxes.push("You tried to develop your website...");
+    if (rantint == 0) {
+      textboxes.push("but it wasn't good enough.");
+      textboxes.push("Your gpa lost .5");
+      gpa -= 0.5;
+    }
+    if (rantint == 1) {
+      textboxes.push("It was Ok");
+      textboxes.push("Your gpa stayed the same..");
+    }
+    if (rantint == 3) {
+      textboxes.push("It was really bad");
+      textboxes.push("Your gpa lost 1..");
+      gpa -= 1;
+    }
+    if (rantint == 4) {
+      textboxes.push("Your code isn't working...");
+      textboxes.push("You are confused...");
+    }
+    textboxes.push("Current GPA is " + gpa);
+  }
+}
+//stores src values for the resources
 var scene = {
   title: "resources/titlescreen.jpg",
   firstScene: "resources/background.png",
   secondScene: "resources/building1.png",
+  battleScene: "resources/Battlestage.png",
 };
 var animate = true;
 var biermann = {
@@ -29,32 +62,99 @@ var biermann = {
   frame: [34, 50],
 };
 var currentText = 0;
+//function to create actual textboxes and populate text
 function createTextBox(text) {
-  textbox.src = "resources/TextBox.png";
-  console.log("text box created");
-  ctx.drawImage(textbox, 100, 500, 800, 100);
+  if (currentSceneNum == 3) {
+    textbox.src = "resources/TextBox.png";
+    ctx.drawImage(textbox, 100, 500, 800, 100);
+  }
   ctx.font = "bold 30px Courier New";
-  ctx.fillText(text, 250, 560);
+  ctx.fillText(text, 250, 540);
 }
+click = new Audio();
+//used to animate bierman character and play sound
+function biermanscream(currentFrame) {
+  images = [
+    "resources/bierman1.png",
+    "resources/bierman2.png",
+    "resources/bierman3.png",
+  ];
+
+  if (intro) {
+    biermannimg.src = images[currentFrame];
+    click.src = "sound/zacian.mp3";
+    if (click.paused) {
+      click.play();
+      click.paused = false;
+    } else {
+      click.pause();
+    }
+    ctx.drawImage(biermannimg, 550, 30, 300, 300);
+    if (currentFrame == 3) {
+      intro = false;
+    }
+  } else {
+    biermannimg.src = "resources/bierman1.png";
+    ctx.drawImage(biermannimg, 550, 30, 300, 300);
+  }
+}
+//used to clear text boxes when the player presses k 
+function clicktext() {
+  if (talking) {
+    click = new Audio();
+    click.src = "sound/select.wav";
+    if (click.paused) {
+      click.play();
+      click.paused = false;
+    } else {
+      click.pause();
+    }
+    if (currentText < textboxes.length) {
+      currentText++;
+    }
+    if (textboxes[currentText] == "You dropped out...") {
+      biermanscream();
+      setTimeout(function () {
+        game.clear();
+        currentSceneNum = 5;
+      }, 1000);
+    }
+  }
+}
+//begins showing text boxes from the textbox queue
 function startTextBoxQueue() {
   console.log(textboxes, currentText);
   if (textboxes[currentText]) {
     createTextBox(textboxes[currentText]);
+    talking = true;
   }
-  setTimeout(() => {
-    if (character.acting) {
-      click = new Audio();
-      click.src = "";
-      textisup = false;
-      if (currentText < textboxes.length) {
-        currentText++;
-      } else {
-        biermann.talking = false;
-        currentSceneNum = 4;
-      }
+  if (currentText == textboxes.length) {
+    talking = false;
+    if (audio.paused) {
+      audio.play();
+      audio.paused = false;
+    } else {
+      audio.pause();
     }
-  }, 1000);
+    if (currentSceneNum == 3) {
+      biermann.talking = false;
+      trainer = new Audio();
+      audio.volume = 0.2;
+      audio.src = "sound/trainer-battle.ogg";
+      audio.loop = true;
+      if (audio.paused) {
+        audio.play();
+        audio.paused = false;
+      } else {
+        audio.pause();
+      }
+      game.clear();
+      currentSceneNum = 4;
+    }
+  }
 }
+
+//used to store various functions and attributes of the character
 var character = {
   forwardFramesX: [0, 64, 128, 192],
   forwardFramesY: [0, 1, -1, 1],
@@ -106,6 +206,7 @@ var character = {
     character.speedX = 0;
     character.move = false;
   },
+  //unused created weird interaction with walking 
   sprint: function () {
     if (!character.sprinting) {
       character.sprinting = true;
@@ -160,6 +261,7 @@ function collideAction(collisionArray) {
 }
 let currentFrame = 0;
 let frameCount = 0;
+//function to draw frames of the scenes
 function drawFrames(
   sceneNum,
   canvasPosX,
@@ -167,6 +269,7 @@ function drawFrames(
   currentDirection,
   currentFrame
 ) {
+  //handles various scenes within the game
   //background
   if (sceneNum == 1) {
     var background = new Image();
@@ -302,6 +405,7 @@ function drawFrames(
           );
           break;
       }
+      ctx.drawImage(biermannimg, 480, 60, 100, 100);
       if (biermann.talking) {
         if (!textboxes.includes("Ahh I see you finally came to class.")) {
           textboxes.push("Ahh I see you finally came to class.");
@@ -311,7 +415,37 @@ function drawFrames(
         }
         startTextBoxQueue();
       }
-      ctx.drawImage(biermannimg, 480, 60, 100, 100);
+    }
+  }
+  if (sceneNum == 4) {
+    var background = new Image();
+    background.src = "resources/battleBackground.png";
+    var battlepage = new Image();
+    battlepage.src = "resources/Battlestage.png";
+    var player = new Image();
+    player.src = "resources/playerback.png";
+    ctx.drawImage(background, 0, 0,960,600);
+    ctx.drawImage(battlepage, 0, 0, 960, 600);
+    biermannimg.src = "resources/bierman1.png";
+    ctx.fillText("Bierman", 30,55);
+    ctx.drawImage(biermannimg, 550, 30, 300, 300);
+    ctx.drawImage(player, 50, 225);
+    ctx.font = "bold 30px Courier New";
+    ctx.fillText("GPA: "+ gpa.toFixed(1), 45,525);
+    if (!textboxes.includes("Let me see your website...")) {
+      textboxes.push("Let me see your website...");
+    }
+    if (!textboxes.includes("Press L to develop")) {
+      textboxes.push("Press L to develop");
+    }
+    startTextBoxQueue();
+    if (gpa <= 0) {
+      if (!textboxes.includes("Your gpa is bad...")) {
+        textboxes.push("Your gpa is bad...");
+      }
+      if (!textboxes.includes("You dropped out...")) {
+        textboxes.push("You dropped out...");
+      }
     }
   }
   if (character.isCollidingAction) {
@@ -348,7 +482,6 @@ function drawFrames(
 }
 
 //collisionArray stores values for areas player cannot walk into,
-//might split this up if it becomes a problem
 //desks are 68px wide 32px tall
 var collsionArray = [
   [[305, 215], [525, 280], [2]],
@@ -385,6 +518,7 @@ var collisionAction = [
   [[392, 286], [440, 290], ["door1"], [2]],
   [[483, 69], [560, 160], ["bierman"], [3]],
 ];
+//controls actual animation within the game, 
 function step() {
   if (animate) {
     //control framerate
